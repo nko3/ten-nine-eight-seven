@@ -1,0 +1,19 @@
+{
+  "name": "nko3-ten-nine-eight-seven",
+  "version": "0.0.0",
+  "description": "ten,nine,eight,seven..",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nko3/ten-nine-eight-seven.git"
+  },
+  "dependencies": {
+  },
+  "engines": {
+    "node": "0.8.x"
+  },
+  "subdomain": "ten-nine-eight-seven.nko3"
+}
