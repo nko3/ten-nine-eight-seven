@@ -1,9 +1,24 @@
-module.exports = class User
+net = require 'net'
 
-	constructor : (@location) ->
+module.exports = class User 
+
+	constructor : (@uid, @location) ->
+		@port = 5000 + @uid
+		@startServer()
+
+	update : (@location) ->
 
 
-	update : ->
+	destroy : ->
+		@stopServer()
 
+
+	startServer : ->
+		@server = net.createServer (socket) ->
+ 
+  		@server.listen @port
+
+  	stopServer : ->
+  		@server.close()
 
 

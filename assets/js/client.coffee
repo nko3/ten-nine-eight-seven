@@ -59,3 +59,7 @@ $ ->
 
 	socket.on 'removeUser', (data) ->
 		client.removeUser data.uid
+
+	socket.on 'updateUser', (data) ->
+		client.removeUser data.uid
+		client.createUser data.uid, data.location
