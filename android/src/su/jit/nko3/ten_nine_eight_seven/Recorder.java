@@ -40,6 +40,14 @@ public class Recorder {
 		camera.stopPreview();
 		camera.release();
 		camera = null;
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			socket = null;
+		}
 		hideButton();
 	}
 	
@@ -125,18 +133,9 @@ public class Recorder {
 	protected void stop() {
 		Log.e("recorder", "stop");
 		if (recorder != null) {
-			recorder.stop();
 			recorder.reset();
 			recorder.release();
 			recorder = null;
-		}
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			socket = null;
 		}
 		try {
 			camera.reconnect();
