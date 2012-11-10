@@ -1,25 +1,38 @@
 package su.jit.nko3.ten_nine_eight_seven;
 
 import static su.jit.nko3.ten_nine_eight_seven.CommonUtilities.TAG;
+import static su.jit.nko3.ten_nine_eight_seven.CommonUtilities.SERVER_NAME;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
 public class Connection {
+	
+	final int FIRST_PORT = 5000;
 
 	private AsyncTask<Void, Void, Void> httpRequestsTask;
 	private int _userId;
 	private Location _location;
 	private boolean _isStarted = false;
 
-	public void start() {
+	public void start(final Recorder recorder) {
 		httpRequestsTask = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				Log.d(TAG, "Connection started.");
 				_userId = ServerProxy.register(_location);
-				// TODO: Update UI
+				try {
+					recorder.socketAvailable(new Socket(SERVER_NAME, FIRST_PORT+_userId));
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				_isStarted = true;
 				return null;
 			}
