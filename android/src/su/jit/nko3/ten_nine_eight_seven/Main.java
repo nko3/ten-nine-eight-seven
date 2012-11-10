@@ -6,13 +6,15 @@ import android.view.Menu;
 
 public class Main extends Activity {
 
-    private Client client;
+    private Connection _connection;
+	private LocationService _locationService;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        client = new Client(this);
+        _connection = new Connection();
+        _locationService = new LocationService(this, _connection);
     }
 
     @Override
@@ -23,19 +25,20 @@ public class Main extends Activity {
     
     @Override
 	public void onResume() {
+    	_locationService.start();
 		super.onResume();
-		client.onResume();
+		
 	}
 	
 	@Override
 	public void onPause() {
-		client.onPause();
+		_locationService.stop();
 		super.onPause();
 	}
 	
 	@Override
     protected void onDestroy() {
-        client.onDestroy();
+        _connection.destroy();
         super.onDestroy();
     }
 }
