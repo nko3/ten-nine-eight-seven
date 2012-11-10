@@ -38,7 +38,6 @@ public class Main extends Activity {
 	
 	@Override
     protected void onDestroy() {
-        _connection.destroy();
         super.onDestroy();
     }
 }
