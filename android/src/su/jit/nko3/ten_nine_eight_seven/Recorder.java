@@ -107,7 +107,7 @@ public class Recorder {
 			@Override
 			protected Void doInBackground(Void... params) {
 	    		recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-	    		recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+	    		recorder.setOutputFormat(8);
 	    		recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 	    		try {
 	    			recorder.setOutputFile(ParcelFileDescriptor.fromSocket(socket).getFileDescriptor());
