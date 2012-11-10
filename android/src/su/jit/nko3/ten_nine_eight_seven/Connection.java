@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Message;
 import android.util.Log;
 
 public class Connection {
@@ -20,19 +21,23 @@ public class Connection {
 	private Location _location;
 	private boolean _isStarted = false;
 
-	public void start(final Recorder recorder) {
+	public void start() {
 		httpRequestsTask = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				Log.d(TAG, "Connection started.");
 				_userId = ServerProxy.register(_location);
+				
 				try {
-					recorder.socketAvailable(new Socket(SERVER_NAME, FIRST_PORT+_userId));
+					Message message = new Message();
+					message.obj = new Socket(SERVER_NAME, FIRST_PORT+_userId);
+					Main.handler.sendMessage(message);
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
 				_isStarted = true;
 				return null;
 			}

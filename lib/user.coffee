@@ -2,8 +2,8 @@ net = require 'net'
 
 module.exports = class User 
 
-	constructor : (@uid, @location) ->
-		@port = 5000 + @uid
+	constructor : (@id, @location) ->
+		@port = 5000 + @id
 		@startServer()
 
 	update : (@location) ->
@@ -12,11 +12,15 @@ module.exports = class User
 	destroy : ->
 		@stopServer()
 
-
 	startServer : ->
 		@server = net.createServer (socket) ->
- 
-  		@server.listen @port
+			console.log "connect"
+
+			socket.on "data", ->
+				console.log "video..."
+
+		@server.listen @port, =>
+  			console.log "Started TCP #{@port}"
 
   	stopServer : ->
   		@server.close()
