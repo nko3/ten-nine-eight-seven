@@ -2,15 +2,20 @@
   "name": "nko3-ten-nine-eight-seven",
   "version": "0.0.0",
   "description": "ten,nine,eight,seven..",
-  "main": "server.js",
+  "main": "server.coffee",
   "scripts": {
-    "start": "node server.js"
+    "start": "coffee server.coffee"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:nko3/ten-nine-eight-seven.git"
   },
   "dependencies": {
+    "express": "3.0.x",
+    "socket.io": "0.9.x",
+    "coffee-script": "1.4.x",
+    "connect-assets": "2.3.x",
+    "ejs": "0.8.x"
   },
   "engines": {
     "node": "0.8.x"
