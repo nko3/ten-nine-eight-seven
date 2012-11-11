@@ -63,7 +63,7 @@ class Client
 	hideVideo : () ->
 		$('video').remove();
 		$('.overlay').hide()
-		@showing = nil
+		@showing = null
 
 	removeUser : (uid) ->
 		if @showing == uid
