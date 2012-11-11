@@ -51,17 +51,23 @@ class Client
 			@showVideo uid
 
 	showVideo : (uid) ->
-		overlay = $('.overlay')
+		@showing = uid
+		overlay = 
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
 		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
-		overlay.append(video);
-		overlay.show()
-		$('.background').one 'click', ->
-			video.remove();
-			overlay.hide()
+		$('.overlay').append(video);
+		$('.overlay').show()
+		$('.background').one 'click', @hideVideo
+	
+	hideVideo : () ->
+		$('video').remove();
+		$('.overlay').hide()
+		@showing = nil
 
 	removeUser : (uid) ->
+		if @showing == uid
+			@hideVideo
 		if @clients[uid]
 			@clients[uid].marker.setMap null
 			@clients[uid].label.setMap null
