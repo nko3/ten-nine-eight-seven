@@ -23,22 +23,10 @@ module.exports = class User
   		@server.close()
 
 	startServer : ->
-		@stream = new stream.Stream()
-		@stream.writable = true
-		@stream.write = (data) ->
-			for listener in @listeners
-				listener.write data, 'binary'
-			return true
-
-		@stream.end = (data) ->
-			for listener in @listeners
-				listener.write data, 'binary'
-				listener.close()
-
 		@server = net.createServer (@socket) =>
 			console.log "connect"
 
-			@socket.on "close", ->
+			@socket.on "close", =>
 				console.log "close"
 				for listener in @listeners
 					listener.end()
@@ -50,6 +38,8 @@ module.exports = class User
 					"-f": "webm"
 			@processor.on "progress", (bytes) ->
 				console.log "converted #{bytes} bytes"
+			@processor.on "info", (info) ->
+				console.log "info: #{info}"
 			@processor.execute()
 
 		@server.listen @port, =>
