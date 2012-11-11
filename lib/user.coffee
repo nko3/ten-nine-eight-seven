@@ -25,10 +25,10 @@ module.exports = class User
 				for listener in @listeners
 					listener.write data, 'binary'
 
-			@socket.on "close", ->
+			@socket.on "close", =>
 				console.log "close"
 				for listener in @listeners
-					listener.close()
+					listener.end()
 
 		@server.listen @port, =>
   			console.log "Started TCP #{@port}"

@@ -49,14 +49,14 @@ class Client
 			@showVideo uid
 
 	showVideo : (uid) ->
-		if $('video').length == 0
-			$('body').append(document.createElement('video'))
 		video = $('video')
-		video.attr('autoplay', true);
 		source = $(document.createElement('source'))
 		source.attr 'src', "/users/#{uid}/video"
 		source.attr 'type', "video/webm"
 		$('video').append source
+		$('.overlay').show()
+		$('.background').one 'click', ->
+			$('.overlay').hide()
 
 	removeUser : (uid) ->
 		if @clients[uid]
