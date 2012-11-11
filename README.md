@@ -11,7 +11,3 @@
 
 ### Or build from android folder
 
-## Vote
-
-<iframe src="http://nodeknockout.com/iframe/ten-nine-eight-seven" frameborder=0 scrolling=no allowtransparency=true width=115 height=25>
-</iframe>
