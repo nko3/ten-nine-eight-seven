@@ -22,9 +22,9 @@ module.exports = class User
 		{uid: @id, location: @location, name: @name, orientation: @orientation}
 
 	registerStream : (res) ->
-		@listeners < res
+		@listeners.push(res)
 		res.on "close", () ->
-			@listeners = @listeners.filter (each) -> each isnt res
+			@listeners = (each for each in @listeners when each isnt res)
 
 	stopServer : ->
 		@server.close()
@@ -52,7 +52,8 @@ module.exports = class User
 			socket.pipe(transcoder_input)
 			transcoder_output = fs.createReadStream(@output_fifo)
 			transcoder_output.on "data", (data) =>
-			listener.write(data) for listener in @listeners
+				console.log "received data #{data.length} for #{@listeners.length} listeners"
+				listener.write(data, 'binary') for listener in @listeners
 			transcoder_output.on "error", (error) =>
 				console.log "error while reading output (user:#{@id})", error
 

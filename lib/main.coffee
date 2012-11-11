@@ -46,9 +46,9 @@ module.exports = class Main
 
 	removeUser : (uid) ->
 		console.log "Remove user: #{uid}"
-		user = @users[uid]
-		user.destroy()
-		delete @users[uid]
+		if user = @users[uid]
+			user.destroy()
+			delete @users[uid]
 
 		@sendToViewers "removeUser", {uid: user.id}
 		{uid : user.id}
