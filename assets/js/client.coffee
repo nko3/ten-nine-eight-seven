@@ -47,7 +47,7 @@ class Client
 		userPosition = new google.maps.LatLng(location.lat, location.lon)
 		image = '/images/location.png';
 		@clients[uid] = @paintUser userPosition, "user:#{uid}"
-		google.maps.event.addListener @clients[uid], "click", =>
+		google.maps.event.addListener @clients[uid].marker, "click", =>
 			@showVideo uid
 
 	showVideo : (uid) ->
