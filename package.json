@@ -15,8 +15,7 @@
     "socket.io": "0.9.x",
     "coffee-script": "1.4.x",
     "connect-assets": "2.3.x",
-    "ejs": "0.8.x",
-    "basicFFmpeg": "0.0.7"
+    "ejs": "0.8.x"
   },
   "engines": {
     "node": "0.8.x"

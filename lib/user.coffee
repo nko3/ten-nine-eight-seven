@@ -1,6 +1,6 @@
 net = require 'net'
 fs = require 'fs'
-spawn = require('child_process').spawn
+exec= require('child_process').exec
 
 module.exports = class User
 
@@ -19,22 +19,19 @@ module.exports = class User
 		@listeners.push res
 
 	stopServer : ->
-  		@server.close()
+		@server.close()
 
 	startServer : ->
 		@server = net.createServer (@socket) =>
-			console.log "connect"
-			fifo = "/tmp/fifos/#{@id}"
-			child = spawn 'ffmpeg', ['-probesize 8192', '-f', 'mpegts', '-i', fifo, 'test.webm']
-			child.stdout.on 'data', (data) ->
-				console.log "out: #{data}"
-			child.stderr.on 'data', (data) ->
-				console.log "err: #{data}"
-			@socket.pipe(fs.createWriteStream(fifo))
-
+			console.log "connect #{@id}"
+			input_fifo = "/tmp/fifos/#{@id}.in.ts"
+			output_fifo = "/tmp/fifos/#{@id}.out.mp4"
+			exec "rm -f #{input_fifo} && mkfifo #{input_fifo} && rm -f #{output_fifo} && mkfifo #{output_fifo}", =>
+				child = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{input_fifo} -c:v copy #{output_mp4}", (error, stdout, stderr) =>
+					console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
+				@socket.pipe(fs.createWriteStream(input_fifo))
+				fs.createReadStrem(output_fifo).pipe(@listeners[0]) if @listeners.length > 0
 		@server.listen @port, =>
-  			console.log "Started TCP #{@port}"
-
-  	
+			console.log "Started TCP #{@port}"
 
 
