@@ -64,7 +64,11 @@ class Client
 	
 	hideVideo : (uid) ->
 		if @showing == uid
-			$('video').remove();
+			$('video').each ->
+				this.pause()
+				delete this
+				$(this).remove()
+				
 			$('.background').unbind 'click'
 			$('.overlay').hide()
 			@showing = null
