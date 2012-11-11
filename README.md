@@ -10,3 +10,8 @@
 ![QR - Code](http://chart.googleapis.com/chart?cht=qr&chs=100x100&choe=UTF-8&chld=H|0&chl=http://goo.gl/zD1Gf)
 
 ### Or build from android folder
+
+## Vote
+
+<iframe src="http://nodeknockout.com/iframe/ten-nine-eight-seven" frameborder=0 scrolling=no allowtransparency=true width=115 height=25>
+</iframe>
