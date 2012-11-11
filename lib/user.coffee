@@ -29,10 +29,9 @@ module.exports = class User
 		@server = net.createServer (socket) =>
 			console.log "connect #{@id}"
 			if @transcoder?
-				# this is a resume
-				@transcoder.kill()
-				videoResumed?()
-				@startTranscoder(socket)
+				exec "kill -9 `ps -eo pid,args | grep '#{@input_fifo} #{@output_fifo}' | cut --delimiter ' ' -f 2`", =>		
+					@startTranscoder(socket)
+					videoResumed?()
 			else
 				@startTranscoder(socket)
 		@server.listen @port, =>
