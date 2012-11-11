@@ -21,30 +21,32 @@ class Client
 			@position = @defaultPosition
 			cb?()
 
+	paintUser: (position, name) ->
+		image = '/images/location.png';
+		result = 
+			marker: new google.maps.Marker
+				position: position
+				map: @map
+				icon: image
+			label: new Label
+				map: @map
+				position: position
+				text: name
 
 	paintMap : () ->
-
 		viewerPosition = new google.maps.LatLng(@position[0], @position[1])
 		options = 
 			zoom: 19
 			center: viewerPosition
 			mapTypeId: google.maps.MapTypeId.ROADMAP
-
 		@map = new google.maps.Map $("#map")[0], options
+		@paintUser viewerPosition, "You"
 
-		image = '/images/location.png';
-		clientMarker = new google.maps.Marker
-			position: viewerPosition
-			map: @map
-			icon: image
 
 	createUser : (uid, location) ->
 		userPosition = new google.maps.LatLng(location.lat, location.lon)
 		image = '/images/location.png';
-		@clients[uid] = new google.maps.Marker
-			position: userPosition
-			map: @map
-			icon: image
+		@clients[uid] = @paintUser userPosition, "user:#{uid}"
 		google.maps.event.addListener @clients[uid], "click", =>
 			@showVideo uid
 
@@ -60,7 +62,8 @@ class Client
 
 	removeUser : (uid) ->
 		if @clients[uid]
-			@clients[uid].setMap null
+			@clients[uid].marker.setMap null
+			@clients[uid].label.setMap null
 			delete @clients[uid]
 
 $ ->

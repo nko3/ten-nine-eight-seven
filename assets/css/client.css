@@ -42,5 +42,15 @@ body {
 	top: 10%;
 	left: 25%;
 	z-index: 2;
+}
 
+.label {
+	background-color: white;
+	border:1px #eee solid;
+	padding: 2px 3px;
+	position: relative;
+	left: 6px;
+	bottom: 23px;
+	font: 10px Arial;
+	z-index: 1.5;
 }
