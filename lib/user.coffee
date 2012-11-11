@@ -4,11 +4,10 @@ exec= require('child_process').exec
 
 module.exports = class User
 
-	listeners : []
-
 	constructor : (@id, data) ->
 		@update(data)
 		@port = 5000 + @id
+		@listeners = []
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
 		@output_fifo = "/tmp/fifos/#{@id}.out.webm"
 
