@@ -9,6 +9,8 @@ module.exports = class User
 	constructor : (@id, @location) ->
 		@port = 5000 + @id
 		@startServer()
+		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
+		@output_fifo = "/tmp/fifos/#{@id}.out.mp4"
 
 	update : (@location) ->
 
@@ -16,7 +18,7 @@ module.exports = class User
 		@stopServer()
 
 	sendVideo : (res) ->
-		@listeners.push res
+		fs.createReadStrem(@output_fifo).pipe(res)
 
 	stopServer : ->
 		@server.close()
@@ -24,14 +26,15 @@ module.exports = class User
 	startServer : ->
 		@server = net.createServer (@socket) =>
 			console.log "connect #{@id}"
-			input_fifo = "/tmp/fifos/#{@id}.in.ts"
-			output_fifo = "/tmp/fifos/#{@id}.out.mp4"
-			exec "rm -f #{input_fifo} && mkfifo #{input_fifo} && rm -f #{output_fifo} && mkfifo #{output_fifo}", =>
-				child = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{input_fifo} -c:v copy #{output_mp4}", (error, stdout, stderr) =>
+			
+			exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
+				child = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} -c:v copy #{@output_mp4}", (error, stdout, stderr) =>
 					console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
-				@socket.pipe(fs.createWriteStream(input_fifo))
-				fs.createReadStrem(output_fifo).pipe(@listeners[0]) if @listeners.length > 0
+				@socket.pipe(fs.createWriteStream(@input_fifo))
+				
 		@server.listen @port, =>
 			console.log "Started TCP #{@port}"
+
+
 
 

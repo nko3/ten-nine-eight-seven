@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceView;
 import android.widget.ImageButton;
@@ -25,6 +26,7 @@ public class Main extends Activity {
 		handler = new Handler() {
 			@Override
 			public void handleMessage(Message message) {
+				Log.d("das", "Message!!!");
 				_recorder.socketAvailable((Socket) message.obj);
 			}
 		};

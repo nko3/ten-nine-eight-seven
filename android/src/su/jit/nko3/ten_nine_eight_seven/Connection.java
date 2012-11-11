@@ -29,7 +29,16 @@ public class Connection {
 				Log.d(TAG, "Connection started.");
 
 				_userId = ServerProxy.register(_location);
-
+				try {
+					Message message = new Message();
+					message.obj = new Socket(SERVER_NAME, FIRST_PORT + _userId);
+					Log.d("Connection", "Message sent.");
+					Main.handler.sendMessage(message);
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				_isStarted = true;
 				return null;
 			}
@@ -54,6 +63,7 @@ public class Connection {
 			protected Void doInBackground(Void... params) {
 				_userId = ServerProxy.update(_userId, _location);
 				_isStarted = true;
+				
 				return null;
 			}
 
@@ -97,6 +107,7 @@ public class Connection {
 				try {
 					Message message = new Message();
 					message.obj = new Socket(SERVER_NAME, FIRST_PORT + _userId);
+					Log.d("Connection", "Message sent.");
 					Main.handler.sendMessage(message);
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
@@ -111,6 +122,7 @@ public class Connection {
 				httpRequestsTask = null;
 			}
 		};
+		httpRequestsTask.execute(null, null, null);
 
 	}
 }
