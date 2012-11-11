@@ -19,9 +19,9 @@ app.engine('.html', require('ejs').__express)
 main = new Main io
 
 app.get '/', (req, res) ->
+  res.render 'iframe.ejs', {}
+app.get '/map', (req, res) ->
   res.render 'index.ejs', {}
-app.get '/test', (req, res) ->
-  res.render 'test.ejs', {}
 
 app.post '/users/new', (req, res) ->
 	res.send main.createUser req.body.location
