@@ -27,7 +27,7 @@ app.post '/users/new', (req, res) ->
 	main.createUser req.body, res
 
 app.get '/users/:id/video', (req, res) ->
-	main.videoUser req.params.id, res
+	main.streamVideo req.params.id, res
 
 app.post '/users/:id', (req, res) ->
 	res.send main.updateUser req.params.id, req.body

@@ -21,11 +21,10 @@ module.exports = class User
 	to_json: () ->
 		{uid: @id, location: @location, name: @name, orientation: @orientation}
 
-	sendVideo : (res) ->
-		transcoder_output = fs.createReadStream(@output_fifo)
-		transcoder_output.on "error", (error) =>
-			console.log "error while reading output (user:#{@id})", error
-		transcoder_output.pipe(res)
+	registerStream : (res) ->
+		@listeners < res
+		res.on "close", () ->
+			@listeners = @listeners.filter (each) -> each isnt res
 
 	stopServer : ->
 		@server.close()
@@ -51,7 +50,9 @@ module.exports = class User
 			transcoder_input.on "error", (error) =>
 				console.log "error while writing input (user:#{@id})", error
 			socket.pipe(transcoder_input)
-			# don't let our pipes clog
-			@sendVideo(fs.createWriteStream("/dev/null"))
-
+			transcoder_output = fs.createReadStream(@output_fifo)
+			transcoder_output.on "data", (data) =>
+			listener.write(data) for listener in @listeners
+			transcoder_output.on "error", (error) =>
+				console.log "error while reading output (user:#{@id})", error
 
