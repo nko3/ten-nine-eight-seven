@@ -15,6 +15,29 @@ body {
 	display: none;	
 }
 
+.about {
+	position: absolute;
+	text-align: left;
+	padding: 10px;
+	right: 0;
+	top: 0;
+	margin-top: 60px;
+	margin-right: 10px;
+	background: white;
+	border: 1px solid black;
+	opacity: .9;
+	width: 400px;
+	font-family: Arial;
+	font-size: 12px;
+}
+
+.about-link {
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 10px 10px;
+}
+
 .background {
 	position: absolute;
 	left: 0;
