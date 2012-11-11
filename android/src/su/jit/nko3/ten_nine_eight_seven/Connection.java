@@ -75,11 +75,8 @@ public class Connection {
 			@Override
 			protected Void doInBackground(Void... params) {
 				_userId = ServerProxy.update(_userId, _location, getRotation());
-				_isStarted = true;
-
 				return null;
 			}
-
 			@Override
 			protected void onPostExecute(Void result) {
 				httpRequestsTask = null;
