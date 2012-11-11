@@ -57,7 +57,7 @@ class Client
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
 		video.attr 'style', "-webkit-transform:rotate(#{90-@clients[uid].orientation}deg)"
-		video.html "<source src='/users/#{uid}/video?_=#{time}' type='video/webm'>"
+		video.html "<source src='http://maximilianschneider.net:8080/consume/#{uid}?_=#{time}' type='video/webm'>"
 		$('.overlay').append(video);
 		$('.overlay').show()
 		$('.background').one 'click', =>
