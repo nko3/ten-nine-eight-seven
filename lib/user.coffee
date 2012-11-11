@@ -1,7 +1,6 @@
 net = require 'net'
 fs = require 'fs'
-ffmpeg = require 'basicFFmpeg'
-stream = require 'stream'
+spawn = require('child_process').spawn
 
 module.exports = class User
 
@@ -26,21 +25,10 @@ module.exports = class User
 		@server = net.createServer (@socket) =>
 			console.log "connect"
 
-			@socket.on "close", =>
-				console.log "close"
-				for listener in @listeners
-					listener.end()
-
-			@processor = ffmpeg.createProcessor
-				inputStream: @socket
-				outputStream: fs.createWriteStream('./output.webm')
-				arguments:
-					"-f": "webm"
-			@processor.on "progress", (bytes) ->
-				console.log "converted #{bytes} bytes"
-			@processor.on "info", (info) ->
-				console.log "info: #{info}"
-			@processor.execute()
+			child = spawn 'ffmpeg', ['-i', 'pipe:0', '-f', 'webm', 'pipe:1'],
+				stdio: [@socket, fs.createWriteStream('./output.webm')]
+			child.stderr.on 'data', (data) ->
+				console.log "es ist zu laut für #{data}"
 
 		@server.listen @port, =>
   			console.log "Started TCP #{@port}"
