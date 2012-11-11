@@ -22,7 +22,7 @@ module.exports = class User
 
 	registerStream : (res) ->
 		@listeners.push(res)
-		res.write(@streamHeader) if @streamHeader
+		res.write(@streamHeader, 'binary') if @streamHeader
 		res.on "close", () =>
 			index = @listeners.indexOf(res)
 			@listeners.splice(index, 1) if index != -1
