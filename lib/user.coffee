@@ -17,6 +17,9 @@ module.exports = class User
 	sendVideo : (res) ->
 		@listeners.push res
 
+	stopServer : ->
+  		@server.close()
+
 	startServer : ->
 		@server = net.createServer (@socket) =>
 			console.log "connect"
@@ -33,7 +36,6 @@ module.exports = class User
 		@server.listen @port, =>
   			console.log "Started TCP #{@port}"
 
-  	stopServer : ->
-  		@server.close()
+  	
 
 
