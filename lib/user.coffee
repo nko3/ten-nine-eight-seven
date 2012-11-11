@@ -23,7 +23,7 @@ module.exports = class User
 
 	registerStream : (res) ->
 		@listeners.push(res)
-		res.on "close", () ->
+		res.on "close", () =>
 			index = @listeners.indexOf(res)
 			@listeners.splice(index, 1) if index != -1
 
@@ -45,7 +45,7 @@ module.exports = class User
 			
 	startTranscoder : (socket) ->
 		exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
-			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo}", (error, stdout, stderr) =>
+			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo} &>/dev/null", (error) =>
 				console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
 			transcoder_input = fs.createWriteStream(@input_fifo)
 			transcoder_input.on "error", (error) =>
