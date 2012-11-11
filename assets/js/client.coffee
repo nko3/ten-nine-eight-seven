@@ -53,10 +53,11 @@ class Client
 
 	showVideo : (uid) ->
 		@showing = uid
+		time = (new Date()).getTime()
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
 		video.attr 'style', "-webkit-transform:rotate(#{@clients[uid].orientation}deg)"
-		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
+		video.html "<source src='/users/#{uid}/video?_=#{time}' type='video/webm'>"
 		$('.overlay').append(video);
 		$('.overlay').show()
 		$('.background').one 'click', =>
@@ -68,7 +69,7 @@ class Client
 				this.pause()
 				delete this
 				$(this).remove()
-				
+
 			$('.background').unbind 'click'
 			$('.overlay').hide()
 			@showing = null
