@@ -13,7 +13,7 @@ import android.os.Message;
 import android.util.Log;
 
 public class Connection {
-	
+
 	final int FIRST_PORT = 5000;
 
 	private AsyncTask<Void, Void, Void> httpRequestsTask;
@@ -22,22 +22,14 @@ public class Connection {
 	private boolean _isStarted = false;
 
 	public void start() {
+
 		httpRequestsTask = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				Log.d(TAG, "Connection started.");
+
 				_userId = ServerProxy.register(_location);
-				
-				try {
-					Message message = new Message();
-					message.obj = new Socket(SERVER_NAME, FIRST_PORT+_userId);
-					Main.handler.sendMessage(message);
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
+
 				_isStarted = true;
 				return null;
 			}
@@ -48,6 +40,7 @@ public class Connection {
 			}
 		};
 		httpRequestsTask.execute(null, null, null);
+
 	}
 
 	public void update(Location location) {
@@ -60,7 +53,6 @@ public class Connection {
 			@Override
 			protected Void doInBackground(Void... params) {
 				_userId = ServerProxy.update(_userId, _location);
-				// TODO: Update UI
 				_isStarted = true;
 				return null;
 			}
@@ -93,5 +85,32 @@ public class Connection {
 			}
 		};
 		httpRequestsTask.execute(null, null, null);
+	}
+
+	public void attached() {
+		if (!_isStarted) {
+			return;
+		}
+		httpRequestsTask = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				try {
+					Message message = new Message();
+					message.obj = new Socket(SERVER_NAME, FIRST_PORT + _userId);
+					Main.handler.sendMessage(message);
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+				httpRequestsTask = null;
+			}
+		};
+
 	}
 }

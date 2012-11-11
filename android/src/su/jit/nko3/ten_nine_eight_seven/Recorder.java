@@ -126,8 +126,7 @@ public class Recorder {
 	    	return null;
 			}
 		};
-		startRecording.execute();;
-
+		startRecording.execute();
 	}
 	
 	protected void stop() {

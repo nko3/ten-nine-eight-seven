@@ -10,6 +10,7 @@ public final class CommonUtilities {
 	 * Base URL of the APP server
 	 */
 	static final String SERVER_NAME = "81.169.175.164";
+	
 	static final String SERVER_URL = "http://" + SERVER_NAME + ":3000/";
 
 	/**

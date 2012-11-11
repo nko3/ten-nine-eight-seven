@@ -5,11 +5,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 public class LocationService {
 
 	private static final int TWO_MINUTES = 1000 * 60 * 2;
-	private static final int THIRTY_SECONDS = 1000 * 30;
+	private static final int TEN_SECONDS = 1000 * 10;
 	private Location _location;
 	private Connection _connection;
 	private LocationManager _locationManager;
@@ -42,10 +43,10 @@ public class LocationService {
 		// Register the listener with the Location Manager to receive location
 		// updates
 		_locationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, THIRTY_SECONDS, 0,
+				LocationManager.NETWORK_PROVIDER, TEN_SECONDS, 0,
 				_locationListener);
 		_locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				THIRTY_SECONDS, 0, _locationListener);
+				TEN_SECONDS, 0, _locationListener);
 	}
 
 	/**
@@ -65,6 +66,7 @@ public class LocationService {
 			return;
 		}
 		if (isBetterLocation(location)) {
+			Log.d("LocationServer", "Update location.");
 			_location = location;
 			_connection.update(location);
 		}
