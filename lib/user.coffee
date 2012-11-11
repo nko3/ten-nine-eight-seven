@@ -1,6 +1,6 @@
 net = require 'net'
 fs = require 'fs'
-exec= require('transcoder_process').exec
+exec= require('child_process').exec
 
 module.exports = class User
 
