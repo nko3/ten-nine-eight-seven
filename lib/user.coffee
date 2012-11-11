@@ -10,7 +10,7 @@ module.exports = class User
 		@port = 5000 + @id
 		@startServer()
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
-		@output_fifo = "/tmp/fifos/#{@id}.out.mp4"
+		@output_fifo = "/tmp/fifos/#{@id}.out.webm"
 
 	update : (@location) ->
 
@@ -18,7 +18,10 @@ module.exports = class User
 		@stopServer()
 
 	sendVideo : (res) ->
-		fs.createReadStrem(@output_fifo).pipe(res)
+		transcoder_output = fs.createReadStream(@output_fifo)
+		transcoder_output.on "error", (error) =>
+			console.log "error while reading output (user:#{@id})", error
+		transcoder_output.pipe(res)
 
 	stopServer : ->
 		@server.close()
@@ -28,9 +31,12 @@ module.exports = class User
 			console.log "connect #{@id}"
 			
 			exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
-				child = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} -c:v copy #{@output_mp4}", (error, stdout, stderr) =>
+				child = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo}", (error, stdout, stderr) =>
 					console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
-				@socket.pipe(fs.createWriteStream(@input_fifo))
+				transcoder_input = fs.createWriteStream(@input_fifo)
+				transcoder_input.on "error", (error) =>
+					console.log "error while writing input (user:#{@id})", error
+				@socket.pipe(transcoder_input)
 				
 		@server.listen @port, =>
 			console.log "Started TCP #{@port}"
