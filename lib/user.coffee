@@ -56,13 +56,13 @@ module.exports = class User
 			
 	startTranscoder : (socket) ->
 		exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
-			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} -f webm 'http://localhost:8080/publish/#{@id}?password=secret' &>/dev/null", (error) =>
+			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo} &>/dev/null", (error) =>
 				console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
 			transcoder_input = fs.createWriteStream(@input_fifo)
 			transcoder_input.on "error", (error) =>
 				console.log "error while writing input (user:#{@id})", error
 			socket.pipe(transcoder_input)
-			# @startOutputMultiplexer()
+			@startOutputMultiplexer()
 
 	stopTranscoder : (cb) ->
 		exec "kill -9 `ps -eo pid,args | grep '#{@input_fifo} #{@output_fifo}' | cut --delimiter ' ' -f 2`", =>		
