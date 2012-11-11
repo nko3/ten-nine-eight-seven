@@ -6,6 +6,7 @@ import java.net.Socket;
 
 import android.graphics.Color;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.widget.ImageButton;
 
 public class Recorder {
+	
+	public static final int CAMERA = 0;
 
 	public void enable() {
 		Log.e("recorder", "enable");
@@ -88,10 +91,10 @@ public class Recorder {
 	}
 
 	private void initializeSurface(SurfaceView surface) {
-		this.camera = Camera.open(0);
+		this.camera = Camera.open(CAMERA);
 		this.surface = surface;
 
-		setCameraDisplayOrientation(0, this.camera);
+		setCameraDisplayOrientation(CAMERA, this.camera);
 
 		surface.getHolder().addCallback(new SurfaceHolder.Callback() {
 			@Override
