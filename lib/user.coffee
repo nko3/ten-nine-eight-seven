@@ -51,4 +51,7 @@ module.exports = class User
 			transcoder_input.on "error", (error) =>
 				console.log "error while writing input (user:#{@id})", error
 			socket.pipe(transcoder_input)
+			# don't let our pipes clog
+			@sendVideo(fs.createWriteStream("/dev/null"))
+
 
