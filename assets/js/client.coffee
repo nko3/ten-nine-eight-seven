@@ -67,7 +67,7 @@ class Client
 
 	removeUser : (uid) ->
 		if @showing == uid
-			@hideVideo
+			@hideVideo()
 		if @clients[uid]
 			@clients[uid].marker.setMap null
 			@clients[uid].label.setMap null
