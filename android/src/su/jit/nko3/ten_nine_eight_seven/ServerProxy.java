@@ -19,7 +19,7 @@ public final class ServerProxy {
 	 * 
 	 * @return whether the registration succeeded or not.
 	 */
-	static int register(final Location location) {
+	static JSONObject register(final Location location, final String name) {
 		Log.i(TAG, "Register user.");
 		
 		String serverUrl = SERVER_URL + "users/new";
@@ -28,22 +28,13 @@ public final class ServerProxy {
 
 		try {
 			json.put("location", locationToJson(location));
+			json.put("name", name);
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		JSONObject resp = HttpClient.post(serverUrl, json);
-
-		int uid = -1;
-		try {
-			uid = resp.getInt("uid");
-			Log.i(TAG, "Registered with uid = " + uid);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Log.e(TAG, e.toString());
-		}
-		return uid;
+		return HttpClient.post(serverUrl, json);
 	}
 	
 	static int update(final int uid, final Location location) {

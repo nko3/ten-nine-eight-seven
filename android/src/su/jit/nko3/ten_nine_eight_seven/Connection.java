@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Message;
@@ -14,10 +17,9 @@ import android.util.Log;
 
 public class Connection {
 
-	final int FIRST_PORT = 5000;
-
 	private AsyncTask<Void, Void, Void> httpRequestsTask;
 	private int _userId;
+	private int _port;
 	private Location _location;
 	private boolean _isStarted = false;
 
@@ -27,18 +29,20 @@ public class Connection {
 			@Override
 			protected Void doInBackground(Void... params) {
 				Log.d(TAG, "Connection started.");
+				
+				String name = android.os.Build.MODEL;
 
-				_userId = ServerProxy.register(_location);
+				JSONObject resp = ServerProxy.register(_location, name);
+
 				try {
-					Message message = new Message();
-					message.obj = new Socket(SERVER_NAME, FIRST_PORT + _userId);
-					Log.d("Connection", "Message sent.");
-					Main.handler.sendMessage(message);
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+					_userId = resp.getInt("uid");
+					_port = resp.getInt("port");
+				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+
+				sendSocket();
+
 				_isStarted = true;
 				return null;
 			}
@@ -63,7 +67,7 @@ public class Connection {
 			protected Void doInBackground(Void... params) {
 				_userId = ServerProxy.update(_userId, _location);
 				_isStarted = true;
-				
+
 				return null;
 			}
 
@@ -97,6 +101,10 @@ public class Connection {
 		httpRequestsTask.execute(null, null, null);
 	}
 
+	public int getUserId() {
+		return _userId;
+	}
+
 	public void attached() {
 		if (!_isStarted) {
 			return;
@@ -104,16 +112,9 @@ public class Connection {
 		httpRequestsTask = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
-				try {
-					Message message = new Message();
-					message.obj = new Socket(SERVER_NAME, FIRST_PORT + _userId);
-					Log.d("Connection", "Message sent.");
-					Main.handler.sendMessage(message);
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+
+				sendSocket();
+
 				return null;
 			}
 
@@ -124,5 +125,23 @@ public class Connection {
 		};
 		httpRequestsTask.execute(null, null, null);
 
+	}
+
+	private void sendSocket() {
+		try {
+
+			Message socketMessage = new Message();
+			socketMessage.obj = new Socket(SERVER_NAME, _port);
+			Main.socketHandler.sendMessage(socketMessage);
+
+			Message statusMessage = new Message();
+			statusMessage.obj = "User: " + _userId;
+			Main.statusHandler.sendMessage(statusMessage);
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

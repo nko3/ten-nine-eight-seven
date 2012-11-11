@@ -12,22 +12,31 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceView;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class Main extends Activity {
 
 	private Recorder _recorder;
-	public static Handler handler;
+	public static Handler statusHandler;
+	public static Handler socketHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		handler = new Handler() {
+		socketHandler = new Handler() {
 			@Override
 			public void handleMessage(Message message) {
-				Log.d("das", "Message!!!");
 				_recorder.socketAvailable((Socket) message.obj);
+			}
+		};
+		statusHandler = new Handler() {
+			@Override
+			public void handleMessage(Message message) {
+				String text = (String) message.obj;
+				TextView textView = (TextView) findViewById(R.id.statusView);
+				textView.setText(text);
 			}
 		};
 
