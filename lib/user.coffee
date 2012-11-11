@@ -1,6 +1,9 @@
 net = require 'net'
+fs = require 'fs'
 
-module.exports = class User 
+module.exports = class User
+
+	listeners : []
 
 	constructor : (@id, @location) ->
 		@port = 5000 + @id
@@ -8,16 +11,24 @@ module.exports = class User
 
 	update : (@location) ->
 
-
 	destroy : ->
 		@stopServer()
 
+	sendVideo : (res) ->
+		@listeners.push res
+
 	startServer : ->
-		@server = net.createServer (socket) ->
+		@server = net.createServer (@socket) =>
 			console.log "connect"
 
-			socket.on "data", ->
-				console.log "video..."
+			@socket.on "data", (data) =>
+				for listener in @listeners
+					listener.write data, 'binary'
+
+			@socket.on "close", ->
+				console.log "close"
+				for listener in @listeners
+					listener.close()
 
 		@server.listen @port, =>
   			console.log "Started TCP #{@port}"

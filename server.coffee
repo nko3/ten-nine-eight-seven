@@ -14,19 +14,26 @@ app.use express.static('public')
 app.use express.bodyParser()
 app.use require('connect-assets')()
 
-app.engine('.html', require('ejs').__express);
-
+app.engine('.html', require('ejs').__express)
 
 main = new Main io
 
 app.get '/', (req, res) ->
   res.render 'index.ejs', {}
+app.get '/test', (req, res) ->
+  res.render 'test.ejs', {}
 
 app.post '/users/new', (req, res) ->
 	res.send main.createUser req.body.location
 
+app.get '/users/:id/video', (req, res) ->
+	main.videoUser req.params.id, res
+
 app.post '/users/:id', (req, res) ->
 	res.send main.updateUser req.params.id, req.body.location
+
+app.get '/users/test', (req, res) ->
+	res.send main.createUser {lat: 52.5022287, lon: 13.4120403}
 
 app.delete '/users/:id', (req, res) ->
 	res.send main.removeUser req.params.id

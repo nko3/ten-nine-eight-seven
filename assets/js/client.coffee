@@ -26,7 +26,7 @@ class Client
 
 		viewerPosition = new google.maps.LatLng(@position[0], @position[1])
 		options = 
-			zoom: 16
+			zoom: 19
 			center: viewerPosition
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 
@@ -45,6 +45,18 @@ class Client
 			position: userPosition
 			map: @map
 			icon: image
+		google.maps.event.addListener @clients[uid], "click", =>
+			@showVideo uid
+
+	showVideo : (uid) ->
+		if $('video').length == 0
+			$('body').append(document.createElement('video'))
+		video = $('video')
+		video.attr('autoplay', true);
+		source = $(document.createElement('source'))
+		source.attr 'src', "/users/#{uid}/video"
+		source.attr 'type', "video/webm"
+		$('video').append source
 
 	removeUser : (uid) ->
 		if @clients[uid]

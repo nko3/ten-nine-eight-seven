@@ -51,6 +51,11 @@ module.exports = class Main
 		@sendToViewers "removeUser", {uid: user.id}
 		{uid : user.id}
 
+	videoUser : (uid, res) ->
+		res.writeHead 200,
+  			'Content-Type' : 'image/png'
+		@users[uid].sendVideo res
+
 	sendToViewers : (event, data) ->
 		for vid, socket of @viewers
 			socket.emit event, data
