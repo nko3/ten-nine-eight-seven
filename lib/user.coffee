@@ -33,7 +33,7 @@ module.exports = class User
 		@server = net.createServer (socket) =>
 			console.log "connect #{@id}"
 			if @transcoder?
-				exec "kill -9 `ps -eo pid,args | grep '#{@input_fifo} #{@output_fifo}' | cut --delimiter ' ' -f 2`", =>		
+				@stopTranscoder ->
 					@startTranscoder(socket)
 					videoResumed?()
 			else
@@ -57,3 +57,8 @@ module.exports = class User
 			transcoder_output.on "error", (error) =>
 				console.log "error while reading output (user:#{@id})", error
 
+	stopTranscoder : (cb) ->
+		exec "kill -9 `ps -eo pid,args | grep '#{@input_fifo} #{@output_fifo}' | cut --delimiter ' ' -f 2`", =>		
+			response.end() for response in @listeners
+			@listeners = []
+			cb?()
