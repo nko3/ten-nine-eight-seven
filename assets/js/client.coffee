@@ -54,7 +54,7 @@ class Client
 		overlay = $('.overlay')
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
-		video.innerHTML "<source src='/users/#{uid}/video' type='video/webm'>"
+		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
 		overlay.show()
 		$('.background').one 'click', ->
 			video.remove();
