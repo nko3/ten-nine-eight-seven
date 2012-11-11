@@ -56,7 +56,7 @@ class Client
 		time = (new Date()).getTime()
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
-		video.attr 'style', "-webkit-transform:rotate(#{@clients[uid].orientation}deg)"
+		video.attr 'style', "-webkit-transform:rotate(#{90-@clients[uid].orientation}deg)"
 		video.html "<source src='/users/#{uid}/video?_=#{time}' type='video/webm'>"
 		$('.overlay').append(video);
 		$('.overlay').show()

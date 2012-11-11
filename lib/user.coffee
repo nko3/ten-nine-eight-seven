@@ -4,11 +4,10 @@ exec= require('child_process').exec
 
 module.exports = class User
 
-	listeners : []
-
 	constructor : (@id, data) ->
 		@update(data)
 		@port = 5000 + @id
+		@listeners = []
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
 		@output_fifo = "/tmp/fifos/#{@id}.out.webm"
 
@@ -23,7 +22,8 @@ module.exports = class User
 
 	registerStream : (res) ->
 		@listeners.push(res)
-		res.on "close", () ->
+		res.write(@streamHeader, 'binary') if @streamHeader
+		res.on "close", () =>
 			index = @listeners.indexOf(res)
 			@listeners.splice(index, 1) if index != -1
 
@@ -34,7 +34,7 @@ module.exports = class User
 		@server = net.createServer (socket) =>
 			console.log "connect #{@id}"
 			if @transcoder?
-				exec "kill -9 `ps -eo pid,args | grep '#{@input_fifo} #{@output_fifo}' | cut --delimiter ' ' -f 2`", =>		
+				@stopTranscoder =>
 					@startTranscoder(socket)
 					videoResumed?()
 			else
@@ -42,19 +42,31 @@ module.exports = class User
 		@server.listen @port, =>
 			console.log "Started TCP #{@port}"
 			serverStarted?()
+
+	startOutputMultiplexer : ->
+		transcoder_output = fs.createReadStream(@output_fifo)
+		transcoder_output.on "data", (data) =>
+			console.log "received data #{data.length} for #{@listeners.length} listeners"
+			if data.length == 430
+				@streamHeader = data
+			listener.write(data, 'binary') for listener in @listeners
+		transcoder_output.on "error", (error) =>
+			console.log "error while reading output (user:#{@id})", error
+
 			
 	startTranscoder : (socket) ->
 		exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
-			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo}", (error, stdout, stderr) =>
+			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo} &>/dev/null", (error) =>
 				console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
 			transcoder_input = fs.createWriteStream(@input_fifo)
 			transcoder_input.on "error", (error) =>
 				console.log "error while writing input (user:#{@id})", error
 			socket.pipe(transcoder_input)
-			transcoder_output = fs.createReadStream(@output_fifo)
-			transcoder_output.on "data", (data) =>
-				console.log "received data #{data.length} for #{@listeners.length} listeners"
-				listener.write(data, 'binary') for listener in @listeners
-			transcoder_output.on "error", (error) =>
-				console.log "error while reading output (user:#{@id})", error
+			@startOutputMultiplexer()
 
+	stopTranscoder : (cb) ->
+		exec "kill -9 `ps -eo pid,args | grep '#{@input_fifo} #{@output_fifo}' | cut --delimiter ' ' -f 2`", =>		
+			response.end() for response in @listeners
+			@listeners = []
+			@streamHeader = null
+			cb?()
