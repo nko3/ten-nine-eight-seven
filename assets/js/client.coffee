@@ -52,7 +52,6 @@ class Client
 
 	showVideo : (uid) ->
 		@showing = uid
-		overlay = 
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
 		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
@@ -67,6 +66,11 @@ class Client
 			$('.background').unbind 'click'
 			$('.overlay').hide()
 			@showing = null
+
+	resumeVideo : (uid) ->
+		if @showing == uid
+			@hideVideo(uid)
+			@showVideo(uid)
 
 	removeUser : (uid) ->
 		@hideVideo(uid)
@@ -89,5 +93,4 @@ $ ->
 		client.createUser data.uid, data.location
 
 	socket.on 'videoResumed', (data) ->
-		client.hideVideo data.uid
-		client.showVideo data.uid
+		client.resumeVideo data.uid
