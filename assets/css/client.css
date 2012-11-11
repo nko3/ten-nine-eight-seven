@@ -37,7 +37,7 @@ body {
 	border-bottom: 1px solid black;
 }
 
-.video {
+video {
 	position: absolute;
 	top: 10%;
 	left: 25%;
