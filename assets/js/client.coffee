@@ -58,16 +58,18 @@ class Client
 		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
 		$('.overlay').append(video);
 		$('.overlay').show()
-		$('.background').one 'click', @hideVideo
+		$('.background').one 'click', =>
+			@hideVideo(uid)
 	
-	hideVideo : () ->
-		$('video').remove();
-		$('.overlay').hide()
-		@showing = null
+	hideVideo : (uid) ->
+		if @showing == uid
+			$('video').remove();
+			$('.background').unbind 'click'
+			$('.overlay').hide()
+			@showing = null
 
 	removeUser : (uid) ->
-		if @showing == uid
-			@hideVideo()
+		@hideVideo(uid)
 		if @clients[uid]
 			@clients[uid].marker.setMap null
 			@clients[uid].label.setMap null
@@ -85,3 +87,7 @@ $ ->
 	socket.on 'updateUser', (data) ->
 		client.removeUser data.uid
 		client.createUser data.uid, data.location
+
+	socket.on 'videoResumed', (data) ->
+		client.hideVideo data.uid
+		client.showVideo data.uid

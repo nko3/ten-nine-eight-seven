@@ -1,16 +1,15 @@
 net = require 'net'
 fs = require 'fs'
-exec= require('child_process').exec
+exec= require('transcoder_process').exec
 
 module.exports = class User
 
 	listeners : []
 
-	constructor : (@id, @location, @name, cb) ->
+	constructor : (@id, @location, @name) ->
 		@port = 5000 + @id
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
 		@output_fifo = "/tmp/fifos/#{@id}.out.webm"
-		@startServer cb
 
 	update : (@location) ->
 
@@ -26,22 +25,26 @@ module.exports = class User
 	stopServer : ->
 		@server.close()
 
-	startServer : (cb) ->
-		@server = net.createServer (@socket) =>
+	startServer : (serverStarted, videoResumed) ->
+		@server = net.createServer (socket) =>
 			console.log "connect #{@id}"
-			
-			exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
-				child = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo}", (error, stdout, stderr) =>
-					console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
-				transcoder_input = fs.createWriteStream(@input_fifo)
-				transcoder_input.on "error", (error) =>
-					console.log "error while writing input (user:#{@id})", error
-				@socket.pipe(transcoder_input)
-				
+			if @transcoder?
+				# this is a resume
+				@transcoder.kill()
+				videoResumed?()
+				@startTranscoder(socket)
+			else
+				@startTranscoder(socket)
 		@server.listen @port, =>
 			console.log "Started TCP #{@port}"
-			cb?()
-
-
-
+			serverStarted?()
+			
+	startTranscoder : (socket) ->
+		exec "rm -f #{@input_fifo} && mkfifo #{@input_fifo} && rm -f #{@output_fifo} && mkfifo #{@output_fifo}", =>
+			@transcoder = exec "ffmpeg -y -probesize 8192 -f mpegts -i #{@input_fifo} #{@output_fifo}", (error, stdout, stderr) =>
+				console.log "failed to transcode video for user #{@id}:\n#{stderr}" if error
+			transcoder_input = fs.createWriteStream(@input_fifo)
+			transcoder_input.on "error", (error) =>
+				console.log "error while writing input (user:#{@id})", error
+			socket.pipe(transcoder_input)
 
