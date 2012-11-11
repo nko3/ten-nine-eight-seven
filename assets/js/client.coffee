@@ -55,7 +55,7 @@ class Client
 		@showing = uid
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
-		video.attr 'style', "-webkit-transform:rotate(#{@clients[uid].orientation+90}deg)"
+		video.attr 'style', "-webkit-transform:rotate(#{90-@clients[uid].orientation}deg)"
 		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
 		$('.overlay').append(video);
 		$('.overlay').show()
