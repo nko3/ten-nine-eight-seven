@@ -22,7 +22,6 @@ module.exports = class User
 
 	registerStream : (res) ->
 		@listeners.push(res)
-		res.write(@streamHeader, 'binary') if @streamHeader
 		res.on "close", () =>
 			index = @listeners.indexOf(res)
 			@listeners.splice(index, 1) if index != -1
@@ -46,9 +45,7 @@ module.exports = class User
 	startOutputMultiplexer : ->
 		transcoder_output = fs.createReadStream(@output_fifo)
 		transcoder_output.on "data", (data) =>
-			console.log "received data #{data.length} for #{@listeners.length} listeners"
-			if data.length == 430
-				@streamHeader = data
+			console.log "#{@id} received data #{data.length} for #{@listeners.length} listeners"
 			listener.write(data, 'binary') for listener in @listeners
 		transcoder_output.on "error", (error) =>
 			console.log "error while reading output (user:#{@id})", error
