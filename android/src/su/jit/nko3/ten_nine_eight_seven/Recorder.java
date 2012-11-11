@@ -3,6 +3,7 @@ package su.jit.nko3.ten_nine_eight_seven;
 import java.io.IOException;
 import java.net.Socket;
 
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -127,6 +128,7 @@ public class Recorder {
 			}
 		};
 		startRecording.execute();
+		button.setColorFilter(Color.argb(150, 255, 0, 0));
 	}
 	
 	protected void stop() {
@@ -142,6 +144,7 @@ public class Recorder {
 			e.printStackTrace();
 		}
 		recording = false;
+		button.setColorFilter(Color.argb(0, 255, 0, 0));
 	}
 	
 	protected void toggleRecording() {
