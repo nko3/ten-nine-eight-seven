@@ -24,7 +24,8 @@ module.exports = class User
 	registerStream : (res) ->
 		@listeners.push(res)
 		res.on "close", () ->
-			@listeners = (each for each in @listeners when each isnt res)
+			index = @listeners.indexOf(res)
+			@listeners.splice(index, 1) if index != -1
 
 	stopServer : ->
 		@server.close()
