@@ -1,6 +1,6 @@
 package su.jit.nko3.ten_nine_eight_seven;
 
-import java.net.Socket;
+import java.net.InetSocketAddress;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -8,10 +8,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
-import android.view.SurfaceView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class Main extends Activity {
@@ -28,7 +25,7 @@ public class Main extends Activity {
 		socketHandler = new Handler() {
 			@Override
 			public void handleMessage(Message message) {
-				_recorder.socketAvailable((Socket) message.obj);
+				_recorder.socketAvailable((InetSocketAddress) message.obj);
 			}
 		};
 		statusHandler = new Handler() {
@@ -49,10 +46,7 @@ public class Main extends Activity {
 			fragmentTransaction.add(fragment, "connectionFragment");
 			fragmentTransaction.commit();
 		}
-
-		SurfaceView surface = (SurfaceView) findViewById(R.id.recordView);
-		ImageButton button = (ImageButton) findViewById(R.id.recordButton);
-		_recorder = new Recorder(surface, button);
+		_recorder = new Recorder(this);
 	}
 
 	@Override

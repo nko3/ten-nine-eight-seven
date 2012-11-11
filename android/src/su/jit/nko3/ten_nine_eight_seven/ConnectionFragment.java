@@ -15,7 +15,7 @@ public class ConnectionFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 
-		_connection = new Connection();
+		_connection = new Connection(getActivity());
 		_locationService = new LocationService(this.getActivity(), _connection);
 		_locationService.start();
 
@@ -26,6 +26,7 @@ public class ConnectionFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		_connection.attached();
+		_connection.sendUpdate();
 	}
 
 	@Override
