@@ -43,10 +43,10 @@ class Client
 		@paintUser viewerPosition, "You"
 
 
-	createUser : (uid, location) ->
+	createUser : (uid, location, name) ->
 		userPosition = new google.maps.LatLng(location.lat, location.lon)
 		image = '/images/location.png';
-		@clients[uid] = @paintUser userPosition, "user:#{uid}"
+		@clients[uid] = @paintUser userPosition, "user:#{uid} / name:#{name}"
 		google.maps.event.addListener @clients[uid].marker, "click", =>
 			@showVideo uid
 
@@ -70,7 +70,7 @@ $ ->
 	client = new Client()
 	socket = io.connect '/'
 	socket.on 'createUser', (data) ->
-		client.createUser data.uid, data.location
+		client.createUser data.uid, data.location, data.name
 
 	socket.on 'removeUser', (data) ->
 		client.removeUser data.uid

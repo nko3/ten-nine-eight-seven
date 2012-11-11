@@ -24,7 +24,7 @@ app.get '/map', (req, res) ->
   res.render 'index.ejs', {}
 
 app.post '/users/new', (req, res) ->
-	res.send main.createUser req.body.location
+	res.send main.createUser req.body.location, req.body.name
 
 app.get '/users/:id/video', (req, res) ->
 	main.videoUser req.params.id, res

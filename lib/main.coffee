@@ -26,12 +26,12 @@ module.exports = class Main
 					delete @viewers[vid]
 
 
-	createUser : (location) ->
+	createUser : (location, name) ->
 		uid = @uid++
 		console.log "Create user: #{uid}"
-		user = @users[uid] = new User uid, location
+		user = @users[uid] = new User uid, location, name
 
-		@sendToViewers "createUser", {uid: user.id, location: user.location}
+		@sendToViewers "createUser", {uid: user.id, location: user.location, name: user.name}
 		{uid: user.id, port: user.port}
 
 	updateUser : (uid, location) ->

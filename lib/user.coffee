@@ -6,7 +6,7 @@ module.exports = class User
 
 	listeners : []
 
-	constructor : (@id, @location) ->
+	constructor : (@id, @location, @name) ->
 		@port = 5000 + @id
 		@startServer()
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
