@@ -6,11 +6,11 @@ module.exports = class User
 
 	listeners : []
 
-	constructor : (@id, @location, @name) ->
+	constructor : (@id, @location, @name, cb) ->
 		@port = 5000 + @id
-		@startServer()
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
 		@output_fifo = "/tmp/fifos/#{@id}.out.webm"
+		@startServer cb
 
 	update : (@location) ->
 
@@ -26,7 +26,7 @@ module.exports = class User
 	stopServer : ->
 		@server.close()
 
-	startServer : ->
+	startServer : (cb) ->
 		@server = net.createServer (@socket) =>
 			console.log "connect #{@id}"
 			
@@ -37,6 +37,7 @@ module.exports = class User
 				transcoder_input.on "error", (error) =>
 					console.log "error while writing input (user:#{@id})", error
 				@socket.pipe(transcoder_input)
+				cb?()
 				
 		@server.listen @port, =>
 			console.log "Started TCP #{@port}"
