@@ -6,7 +6,6 @@ import java.net.Socket;
 
 import android.graphics.Color;
 import android.hardware.Camera;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
@@ -138,6 +137,7 @@ public class Recorder {
 				recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 				recorder.setOutputFormat(8);
 				recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+				
 				try {
 					socket = new Socket();
 					socket.connect(socketAddress);
