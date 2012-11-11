@@ -33,7 +33,7 @@ module.exports = class User
 		@server = net.createServer (socket) =>
 			console.log "connect #{@id}"
 			if @transcoder?
-				@stopTranscoder ->
+				@stopTranscoder =>
 					@startTranscoder(socket)
 					videoResumed?()
 			else
