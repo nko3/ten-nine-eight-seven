@@ -6,15 +6,20 @@ module.exports = class User
 
 	listeners : []
 
-	constructor : (@id, @location, @name) ->
+	constructor : (@id, data) ->
+		@update(data)
 		@port = 5000 + @id
 		@input_fifo = "/tmp/fifos/#{@id}.in.ts"
 		@output_fifo = "/tmp/fifos/#{@id}.out.webm"
 
-	update : (@location) ->
+	update : (data) ->
+		{ @location, @name, @orientation } = data
 
 	destroy : ->
 		@stopServer()
+	
+	to_json: () ->
+		{uid: @id, location: @location, name: @name, orientation: @orientation}
 
 	sendVideo : (res) ->
 		transcoder_output = fs.createReadStream(@output_fifo)

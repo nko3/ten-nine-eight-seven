@@ -18,7 +18,7 @@ module.exports = class Main
 				@viewers[vid] = socket
 
 				for uid, user of @users
-					socket.emit "createUser", {uid: user.id, location: user.location}
+					socket.emit "createUser", user.to_json()
 
 			socket.on 'disconnect', =>
 				socket.get 'vid', (err, vid) =>
@@ -26,22 +26,22 @@ module.exports = class Main
 					delete @viewers[vid]
 
 
-	createUser : (location, name, res) ->
+	createUser : (data, res) ->
 		uid = @uid++
 		console.log "Create user: #{uid}"
-		user = @users[uid] = new User uid, location, name
+		user = @users[uid] = new User uid, data
 		user.startServer =>
-			@sendToViewers "createUser", {uid: user.id, location: user.location, name: user.name}
+			@sendToViewers "createUser", user.to_json()
 			res.send {uid: user.id, port: user.port}
 		, =>
 			@sendToViewers "videoResumed", {uid: user.id}
 
-	updateUser : (uid, location) ->
+	updateUser : (uid, data) ->
 		console.log "Update user: #{uid}"
 		user = @users[uid]
-		user.update location
+		user.update data
 
-		@sendToViewers "updateUser", {uid: user.id, location: user.location}
+		@sendToViewers "updateUser", user.to_json()
 		{uid: user.id}
 
 	removeUser : (uid) ->

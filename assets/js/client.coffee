@@ -43,10 +43,11 @@ class Client
 		@paintUser viewerPosition, "You"
 
 
-	createUser : (uid, location, name) ->
+	createUser : (uid, location, orientation, name) ->
 		userPosition = new google.maps.LatLng(location.lat, location.lon)
 		image = '/images/location.png';
 		@clients[uid] = @paintUser userPosition, "user:#{uid}"
+		@clients[uid].orientation = orientation
 		google.maps.event.addListener @clients[uid].marker, "click", =>
 			@showVideo uid
 
@@ -54,6 +55,7 @@ class Client
 		@showing = uid
 		video = $(document.createElement('video'))
 		video.attr 'autoplay', 'autoplay'
+		video.attr 'style', "transform:rotate(#{@clients[uid].orientation}deg)"
 		video.html "<source src='/users/#{uid}/video' type='video/webm'>"
 		$('.overlay').append(video);
 		$('.overlay').show()
@@ -79,18 +81,25 @@ class Client
 			@clients[uid].label.setMap null
 			delete @clients[uid]
 
+	updateUser : (uid, location, orientation) ->
+		position = new google.maps.LatLng(location.lat, location.lon)
+		{ marker, label } = @clients[uid]
+		marker.setPosition position
+		# label.setPosition position
+		@clients[uid].orientation = orientation
+		$('video').attr 'style', "-webkit-transform:rotate(-#{orientation+90}deg)"
+
 $ ->
-	client = new Client()
+	window.client = client = new Client()
 	socket = io.connect '/'
 	socket.on 'createUser', (data) ->
-		client.createUser data.uid, data.location, data.name
+		client.createUser data.uid, data.location, data.orientation, data.name
 
 	socket.on 'removeUser', (data) ->
 		client.removeUser data.uid
 
 	socket.on 'updateUser', (data) ->
-		client.removeUser data.uid
-		client.createUser data.uid, data.location
+		client.updateUser data.uid, data.location, data.orientation
 
 	socket.on 'videoResumed', (data) ->
 		client.resumeVideo data.uid

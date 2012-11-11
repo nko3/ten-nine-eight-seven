@@ -24,16 +24,13 @@ app.get '/map', (req, res) ->
   res.render 'index.ejs', {}
 
 app.post '/users/new', (req, res) ->
-	main.createUser req.body.location, req.body.name, res
+	main.createUser req.body, res
 
 app.get '/users/:id/video', (req, res) ->
 	main.videoUser req.params.id, res
 
 app.post '/users/:id', (req, res) ->
-	res.send main.updateUser req.params.id, req.body.location
-
-app.get '/users/test', (req, res) ->
-	res.send main.createUser {lat: 52.5022287, lon: 13.4120403}
+	res.send main.updateUser req.params.id, req.body
 
 app.delete '/users/:id', (req, res) ->
 	res.send main.removeUser req.params.id
