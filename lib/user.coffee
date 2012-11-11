@@ -24,9 +24,8 @@ module.exports = class User
 	startServer : ->
 		@server = net.createServer (@socket) =>
 			console.log "connect"
-
-			child = spawn 'ffmpeg', ['-i', 'pipe:0', '-f', 'webm', 'pipe:1'],
-				stdio: [@socket, fs.createWriteStream('./output.webm')]
+			child = spawn 'ffmpeg', ['-i', 'pipe:0', '-f', 'webm', 'test.webm'],
+				stdio: [@socket]
 			child.stderr.on 'data', (data) ->
 				console.log "es ist zu laut für #{data}"
 
